@@ -71,15 +71,18 @@ HostelMania is a full-stack web application built with Next.js where users can p
 
 ### Frontend Steps
 
-1. **Start the development server:**
+1. **Set ENV variable in .env.local  (for backend endpoint)
+    NEXT_PUBLIC_API=http://localhost:3000
+   
+2. **Start the development server:**
 
     ```bash
     npm run dev
     ```
 
-2. **Open your browser:**
+3. **Open your browser:**
 
-    Navigate to [http://localhost:3000](http://localhost:3001).  # 3000 port will be used by backend
+    Navigate to [http://localhost:3001](http://localhost:3001).  # 3000 port will be used by backend
 
 ### Building for Production
 
