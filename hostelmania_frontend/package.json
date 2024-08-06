@@ -1,0 +1,47 @@
+{
+  "name": "yelp-camp",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/material": "^5.6.0",
+    "@reduxjs/toolkit": "^1.8.1",
+    "@types/js-cookie": "^3.0.2",
+    "@types/mapbox-gl": "^2.7.1",
+    "axios": "^0.25.0",
+    "cookie": "^0.6.0",
+    "framer-motion": "^6.2.3",
+    "js-cookie": "^3.0.1",
+    "mapbox-gl": "^2.8.2",
+    "next": "^14.2.5",
+    "next-auth": "^4.3.1",
+    "nprogress": "^0.2.0",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-icons": "^4.3.1",
+    "react-redux": "^8.0.1",
+    "react-toastify": "^8.2.0",
+    "sass": "^1.77.8",
+    "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "@tsconfig/next": "^1.0.2",
+    "@types/cookie": "^0.6.0",
+    "@types/node": "^20",
+    "@types/nprogress": "^0.2.0",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/uuid": "^8.3.4",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
