@@ -1,6 +1,6 @@
 # YelpCamp
 
-YelpCamp is a full-stack web application built with Next.js where users can post information about hostels and view information posted by others. The application features user authentication, CRUD operations for hostel listings, and more.
+HostelMania is a full-stack web application built with Next.js where users can post information about hostels and view information posted by others. The application features user authentication, CRUD operations for hostel listings, and more.
 
 ## Table of Contents
 
@@ -14,11 +14,8 @@ YelpCamp is a full-stack web application built with Next.js where users can post
 
 ## Features
 
-- User authentication (login, logout, register)
-- CRUD operations for hostel listings
+- User authentication (login, logout, register) with security measures
 - View details of each hostel
-- Comment on hostels
-- Edit and delete own hostels and comments
 - Responsive design
 
 ## Technologies Used
@@ -27,7 +24,6 @@ YelpCamp is a full-stack web application built with Next.js where users can post
 - Backend: Node.js, Express
 - Database: MongoDB
 - Authentication: JWT, bcrypt
-- Deployment: Vercel
 
 ## Installation
 
@@ -36,13 +32,13 @@ YelpCamp is a full-stack web application built with Next.js where users can post
 - Node.js (version 14 or higher)
 - MongoDB database
 
-### Steps
+### Backend Steps
 
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/yourusername/yelpcamp.git
-    cd yelpcamp
+    git clone https://github.com/HardikBhati/hostelmania.git
+    cd hostelmania_backend
     ```
 
 2. **Install dependencies:**
@@ -56,28 +52,24 @@ YelpCamp is a full-stack web application built with Next.js where users can post
     Create a `.env.local` file in the root directory and add the following environment variables:
 
     ```env
-    NEXT_PUBLIC_API=http://localhost:3000
-    MONGODB_URI=mongodb://localhost:27017/yelpcamp
+    FRONTEND_ORIGIN=http://localhost:3001
+    MONGODB_URI=mongodb://localhost:27017/HostelMania
     JWT_SECRET=your_jwt_secret
     ```
-
-4. **Run the development server:**
+4. **Set up Mongo db:**
+    install Mongo db for your system create database HostelMania
+5. **Run the development server:**
 
     ```bash
-    npm run dev
+    npm start
     ```
 
     Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Environment Variables
 
-- `NEXT_PUBLIC_API`: The base URL for the API.
-- `MONGODB_URI`: The URI for connecting to the MongoDB database.
-- `JWT_SECRET`: The secret key for signing JWT tokens.
 
-## Usage
 
-### Running Locally
+### Frontend Steps
 
 1. **Start the development server:**
 
@@ -87,7 +79,7 @@ YelpCamp is a full-stack web application built with Next.js where users can post
 
 2. **Open your browser:**
 
-    Navigate to [http://localhost:3000](http://localhost:3000).
+    Navigate to [http://localhost:3000](http://localhost:3001).  # 3000 port will be used by backend
 
 ### Building for Production
 
@@ -103,30 +95,21 @@ YelpCamp is a full-stack web application built with Next.js where users can post
     npm start
     ```
 
-### Running Tests
 
-(Currently no tests implemented)
-
-## API Endpoints
+## API Endpoints (backend)
 
 ### Authentication
 
-- `POST /api/auth/register`: Register a new user
-- `POST /api/auth/login`: Login a user
+- `POST /register`: Register a new user
+- `POST /login`: Login a user
 
 ### Hostels
 
-- `GET /api/hostels`: Get all hostels
-- `POST /api/hostels`: Create a new hostel (authenticated)
-- `GET /api/hostels/:id`: Get a single hostel by ID
-- `PUT /api/hostels/:id`: Update a hostel by ID (authenticated)
-- `DELETE /api/hostels/:id`: Delete a hostel by ID (authenticated)
+- `GET /hostels`: Get all hostels
+- `POST /hostels`: Create a new hostel (authenticated)
+- `GET /hostels/:id`: Get a single hostel by ID
+- `GET /hostels/:username`: Get a single hostels by username
 
-### Comments
-
-- `POST /api/hostels/:id/comments`: Add a comment to a hostel (authenticated)
-- `PUT /api/hostels/:id/comments/:commentId`: Update a comment (authenticated)
-- `DELETE /api/hostels/:id/comments/:commentId`: Delete a comment (authenticated)
 
 ## License
 
