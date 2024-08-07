@@ -29,16 +29,20 @@ HostelBlogs is a full-stack web application built with Next.js and node.js where
 
 ## Features
 
-- User authentication (login, logout, register) with security measures
-- View details of each hostel
-- Responsive design
+- User authentication (login, logout, register) with security measures.
+- Listing and details of each blog.
+- JWT based authentication.
+- get blogs with the author/owner name.
+- Delete blog if authorized.
+- Protected routes with proper implementation of middleware
+- 
 
 ## Technologies Used
 
 - Frontend: Next.js, React, SCSS, MUI (Material-UI)
 - Backend: Node.js, Express
 - Database: MongoDB
-- Authentication: JWT, bcrypt
+- Authentication: JWT
 
 ## Installation
 
@@ -87,15 +91,17 @@ HostelBlogs is a full-stack web application built with Next.js and node.js where
 ### Frontend Steps
 
 1. **Set ENV variable in .env.local  (for backend endpoint)
+
+    ```bash
     NEXT_PUBLIC_API=http://localhost:3000
-   
-2. **Start the development server:**
+    ```
+3. **Start the development server:**
 
     ```bash
     npm run dev
     ```
 
-3. **Open your browser:**
+4. **Open your browser:**
 
     Navigate to [http://localhost:3001](http://localhost:3001).  # 3000 port will be used by backend
 
@@ -116,19 +122,12 @@ HostelBlogs is a full-stack web application built with Next.js and node.js where
 
 ## API Endpoints (backend)
 
-### Authentication
+
 
 - `POST /register`: Register a new user
 - `POST /login`: Login a user
-
-### Hostels
-
-- `GET /hostels`: Get all hostels
-- `POST /hostels`: Create a new hostel (authenticated)
-- `GET /hostels/:id`: Get a single hostel by ID
-- `GET /hostels/:username`: Get a single hostels by username
-
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- `GET /hostels`: Get all hostel blogs
+- `POST /hostels`: Create a new blog (authenticated)
+- `GET /hostels/:id`: Get a blog by ID
+- `GET /hostels/:username`: Get hostel blogs by username/owner name
+- `DELETE /hostels/:id`: Delete hostel if authorized
