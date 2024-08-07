@@ -15,11 +15,11 @@ const Cards: React.FC<response> = (props) => {
         width={300}
         height={450}
         key={el._id}
-        alt={el.title}
+        alt={el.name}
         className={styles.img}
       />
       <div className={styles.box_sub}>
-        <h2>{el.title}</h2>
+        <h2>{el.name}</h2>
         <h2>${el.price}</h2>
       </div>
       <div className={styles.info}>
@@ -27,7 +27,7 @@ const Cards: React.FC<response> = (props) => {
           variant="contained"
           onClick={() => router.push(`/hostels/${el._id}`)}
         >
-          View Camp
+          View Hostel
         </Button>
       </div>
     </div>

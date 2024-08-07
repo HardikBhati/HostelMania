@@ -24,8 +24,8 @@ const Hostels = ({ data }: CampsProps) => {
         <title>Hostels</title>
       </Head>
       <div className={`${classes.banner} overlay`}>
-        <h1>Welcome to HostelMania</h1>
-        <h4>View Hostels All Over The World</h4>
+        <h1>Welcome to HostelBlogs</h1>
+        <h4>View Blogs of Hostels All Over The World</h4>
       </div>
       <AuthorFilter />
       <div className={classes.camp}>

@@ -18,12 +18,12 @@ const Navbar: React.FC = () => {
       {show && <MobileNav click={toggle} />}
       <div className={`${classes.navbar}`}>
         <div className={classes.main}>
-          <h1 className={classes.mobh}>HostelMania</h1>
+          <h1 className={classes.mobh}>HostelBlogs</h1>
           <Link href="/">
-            <h1 className={classes.mainChild}>HostelMania</h1>
+            <h1 className={classes.mainChild}>HostelBlogs</h1>
           </Link>
           <Link href="/hostels">
-            <h3 className={classes.mainChild}>Hostels</h3>
+            <h3 className={classes.mainChild}>Blogs</h3>
           </Link>
           {/* <Link href="/profile"> */}
           {/* <h3 className={classes.mainChild}>Profile</h3> */}

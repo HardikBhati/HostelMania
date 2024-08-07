@@ -7,15 +7,15 @@ const index: React.FC = () => {
   return (
     <div>
       <Head>
-        <title>HostelMania</title>
+        <title>HostelBlogs</title>
       </Head>
 
       <div id="landing-header">
-        <h1 className="display-4">Welcome to HostelMania!</h1>
+        <h1 className="display-4">Welcome to HostelBlogs!</h1>
         <div className="link">
           {auth && (
             <Link href="/hostels">
-              <span className="btn camp">View Hostels</span>
+              <span className="btn camp">View Blogs</span>
             </Link>
           )}
           {!auth && (

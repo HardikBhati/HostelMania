@@ -6,7 +6,7 @@ const AuthorFilter = () => {
   const router = useRouter();
   const [author, setAuthor] = useState('');
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e:any) => {
     setAuthor(e.target.value);
   };
 
@@ -23,7 +23,7 @@ const AuthorFilter = () => {
         type="text"
         value={author}
         onChange={handleFilterChange}
-        placeholder="Filter by Owner"
+        placeholder="Filter by Author/Owner"
         className={styles.inputField}
       />
       <button onClick={applyFilter} className={styles.button}>
