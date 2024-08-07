@@ -1,6 +1,21 @@
-# YelpCamp
+# HostelBlogs
 
-HostelMania is a full-stack web application built with Next.js where users can post information about hostels and view information posted by others. The application features user authentication, CRUD operations for hostel listings, and more.
+HostelBlogs is a full-stack web application built with Next.js and node.js where users can post information about hostels and view information posted by others. The application features user authentication, CRD operations for hostel listings, and more.
+
+<br>
+<br>
+
+![Camp image](hostelmania_frontend/images/image3.png)
+
+
+![Camp image](hostelmania_frontend/images/image4.png)
+
+
+![Camp image](hostelmania_frontend/images/image1.png)
+
+
+![Camp image](hostelmania_frontend/images/image2.png)
+
 
 ## Table of Contents
 
