@@ -1,94 +1,165 @@
-const hostel=require("../models/hostel");
-const comment=require("../models/comment");
+// const hostel=require("../models/hostel");
+// const comment=require("../models/comment");
+// const jwt = require('jsonwebtoken');
+
+// const middleware_obj={};
+
+// middleware_obj.check_hostel_ownership = function check_hostel_ownership(req,res,next){
+//     // checks if the user is logged in
+//     if (req.isAuthenticated())
+//     {
+//         hostel.findById(req.params.id, function(error, hostel_found){
+//             if (error)
+//             {
+//                 // console.log(error);
+//                 req.flash("error", "Cannot find the hostel");
+//                 res.render("/hostels");
+//             }
+//             else
+//             {
+//                 // checks if the user is the author
+//                 if (hostel_found.author.id.equals(req.user.id))
+//                 {
+//                     next();
+//                 }
+//                 else
+//                 {
+//                     req.flash("error", "You do not have the permission to perform edit on this hostel");
+//                     res.redirect("back");
+//                 }
+//             }
+//         })
+//     }
+//     else
+//     {
+//         req.flash("error", "Please login to proceed");
+//         res.redirect("back")
+//     }
+// }
+
+
+// middleware_obj.check_comment_ownership = function check_comment_ownership(req,res,next)
+// {
+//     // check if the user is logged in
+//     if (req.isAuthenticated())
+//     {
+//         comment.findById(req.params.comment_id, function(error, comment_found){
+//             if (error)
+//             {
+//                 req.flash("error", "Cannot find comment");
+//                 // console.log(error);
+//                 res.redirect("back");
+//             }
+//             else
+//             {
+//                 // check if the user is author of post
+//                 if (comment_found.author.id.equals(req.user.id))
+//                 {
+//                     next();
+//                 }
+//                 else
+//                 {
+//                     req.flash("error", "You do not have the permission to perform edit on this comment");
+//                     res.redirect("back");
+//                 }
+//             }
+//         });
+//     }
+//     else
+//     {
+//         req.flash("error", "Please login to proceed");
+//         res.redirect("back");
+//     }
+// }
+
+// middleware_obj.isloggedin = function isloggedin(req, res, next) {
+//     const token = req.header('Authorization')?.replace('Bearer ', '');
+//     console.log("token", token);
+//     if (!token) {
+//         console.log("No token provided");
+//         return res.status(401).json({ error: "Access denied. No token provided." });
+//     }
+//     try {
+//         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//         console.log("Decoded user", decoded);
+//         req.user = decoded; // Attach decoded user data to req.user
+//         next();
+//     } catch (ex) {
+//         console.log("Token verification failed", ex);
+//         return res.status(401).json({ error: "Invalid token." });
+//     }
+// };
+
+
+// module.exports= middleware_obj;
+const Hostel = require("../models/hostel");
+const Comment = require("../models/comment");
 const jwt = require('jsonwebtoken');
 
-const middleware_obj={};
+const middleware = {};
 
-middleware_obj.check_hostel_ownership = function check_hostel_ownership(req,res,next){
-    // checks if the user is logged in
-    if (req.isAuthenticated())
-    {
-        hostel.findById(req.params.id, function(error, hostel_found){
-            if (error)
-            {
-                // console.log(error);
-                req.flash("error", "Cannot find the hostel");
-                res.render("/hostels");
-            }
-            else
-            {
-                // checks if the user is the author
-                if (hostel_found.author.id.equals(req.user.id))
-                {
-                    next();
-                }
-                else
-                {
-                    req.flash("error", "You do not have the permission to perform edit on this hostel");
-                    res.redirect("back");
-                }
-            }
-        })
+middleware.checkHostelOwnership = async (req, res, next) => {
+    try {
+        const hostel = await Hostel.findById(req.params.id).exec();
+        if (!hostel) {
+            req.flash("error", "Cannot find the hostel");
+            return res.redirect("/hostels");
+        }
+        if (hostel.author.id.equals(req.user.id)) {
+            return next();
+        } else {
+            req.flash("error", "You do not have permission to edit this hostel");
+            return res.redirect("back");
+        }
+    } catch (error) {
+        console.error("Error finding hostel:", error);
+        req.flash("error", "An error occurred while finding the hostel");
+        return res.redirect("back");
     }
-    else
-    {
-        req.flash("error", "Please login to proceed");
-        res.redirect("back")
-    }
-}
+};
 
-
-middleware_obj.check_comment_ownership = function check_comment_ownership(req,res,next)
-{
-    // check if the user is logged in
-    if (req.isAuthenticated())
-    {
-        comment.findById(req.params.comment_id, function(error, comment_found){
-            if (error)
-            {
-                req.flash("error", "Cannot find comment");
-                // console.log(error);
-                res.redirect("back");
-            }
-            else
-            {
-                // check if the user is author of post
-                if (comment_found.author.id.equals(req.user.id))
-                {
-                    next();
-                }
-                else
-                {
-                    req.flash("error", "You do not have the permission to perform edit on this comment");
-                    res.redirect("back");
-                }
-            }
-        });
+middleware.checkCommentOwnership = async (req, res, next) => {
+    try {
+        const comment = await Comment.findById(req.params.comment_id).exec();
+        if (!comment) {
+            req.flash("error", "Cannot find comment");
+            return res.redirect("back");
+        }
+        if (comment.author.id.equals(req.user.id)) {
+            return next();
+        } else {
+            req.flash("error", "You do not have permission to edit this comment");
+            return res.redirect("back");
+        }
+    } catch (error) {
+        console.error("Error finding comment:", error);
+        req.flash("error", "An error occurred while finding the comment");
+        return res.redirect("back");
     }
-    else
-    {
-        req.flash("error", "Please login to proceed");
-        res.redirect("back");
-    }
-}
+};
 
-middleware_obj.isloggedin = function isloggedin(req, res, next) {
+middleware.isLoggedIn = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    console.log("token", token);
     if (!token) {
-        console.log("No token provided");
+        console.error("No token provided");
         return res.status(401).json({ error: "Access denied. No token provided." });
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log("Decoded user", decoded);
         req.user = decoded; // Attach decoded user data to req.user
         next();
-    } catch (ex) {
-        console.log("Token verification failed", ex);
+    } catch (error) {
+        console.error("Token verification failed:", error);
         return res.status(401).json({ error: "Invalid token." });
     }
 };
 
+// Protect routes with the isLoggedIn middleware
+middleware.protectRoute = (req, res, next) => {
+    middleware.isLoggedIn(req, res, () => {
+        next();
+    });
+};
 
-module.exports= middleware_obj;
+module.exports = middleware;
+

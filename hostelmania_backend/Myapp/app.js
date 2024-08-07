@@ -25,14 +25,6 @@ app.use(cors({
     origin: process.env.FRONTEND_ORIGIN // Adjust this to match your frontend origin
   }));
 
-//   const corsOptions = {
-//     origin: process.env.FRONTEND_ORIGIN, // Allow your frontend origin
-//     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//     credentials: true, // Allow cookies to be sent with the request
-//     optionsSuccessStatus: 204
-//   };
-  
-// app.use(cors(corsOptions));
 app.use(express.json()); 
 app.use(body_parser.urlencoded({ extended: true }));
 app.set("view engine","ejs");

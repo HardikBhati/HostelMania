@@ -1,39 +1,37 @@
-const express=require("express");
-const router=express.Router({mergeParams: true});
-const hostel=require("../models/hostel")
-const comment=require("../models/comment");
-const user=require("../models/user");
-const middleware=require("../middleware");
-const authenticateJWT = require("../middleware/authenticate_jwt")
+const express = require("express");
+const router = express.Router({ mergeParams: true });
+const Hostel = require("../models/hostel");
+const Comment = require("../models/comment");
+const User = require("../models/user");
+const middleware = require("../middleware");
 
-
-router.get("/", authenticateJWT, (req, res) => {
+// Protect route with middleware.protectRoute
+router.get("/", middleware.protectRoute, async (req, res) => {
     const authorUsername = req.query.username;
     const query = authorUsername ? { "author.username": authorUsername } : {};
-    
-    hostel.find(query, (error, hostels) => {
-        if (error) {
-            console.log("We have encountered an error:");
-            console.log(error);
-            return res.status(500).json({ error: "Internal Server Error" });
-        } else {
-            console.log("Search request was successful");
-            return res.status(200).json({ hostels });
-        }
-    });
+
+    try {
+        const hostels = await Hostel.find(query).exec();
+        console.log("Search request was successful");
+        return res.status(200).json({ hostels });
+    } catch (error) {
+        console.log("We have encountered an error:");
+        console.error(error);
+        return res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 
-router.post("/", middleware.isloggedin, async (req, res) => {
+router.post("/", middleware.protectRoute, async (req, res) => {
     try {
         // Fetch user details
-        const user_obj = await user.findById(req.user.id).exec(); // Use .exec() for better handling
-        
+        const user_obj = await User.findById(req.user.id).exec(); // Use .exec() for better handling
+
         if (!user_obj) {
             return res.status(404).json({ error: "User not found" });
         }
 
         // Create the new hostel
-        const temp = new hostel({
+        const temp = new Hostel({
             name: req.body.name,
             image: req.body.image_url,
             description: req.body.description,
@@ -57,86 +55,58 @@ router.post("/", middleware.isloggedin, async (req, res) => {
     }
 });
 
-// new route
-router.get("/new", function(req,res){
-    res.render("hostels/new");
-})
-
-// show route
-router.get("/:id", authenticateJWT, function(req, res) {    
-    hostel.findById(req.params.id).populate("comments").exec(function(error, hostel_found) {
-        if (error) {
-            console.log("Error encountered while finding hostel data:", error);
-            return res.status(500).json({ error: "Error encountered while finding hostel data" });
-        }
-        
+router.get("/:id", middleware.protectRoute, async (req, res) => {
+    try {
+        const hostel_found = await Hostel.findById(req.params.id).populate("comments").exec();
         console.log("Hostel data found successfully:", hostel_found);
         return res.status(200).json({ hostel_found });
-    });
+    } catch (error) {
+        console.log("Error encountered while finding hostel data:", error);
+        return res.status(500).json({ error: "Error encountered while finding hostel data" });
+    }
 });
 
+// Update hostel route (currently commented out, but should use middleware.protectRoute if implemented)
+router.put("/:id", middleware.protectRoute, async (req, res) => {
+    try {
+        const updatedHostel = await Hostel.findByIdAndUpdate(
+            req.params.id,
+            {
+                name: req.body.name,
+                image: req.body.image_url,
+                description: req.body.description,
+                price: req.body.price
+            },
+            { new: true } // Return the updated document
+        ).exec();
 
-// edit hostel route
-router.get("/:id/edit", middleware.check_hostel_ownership, function(req,res){
-    hostel.findById(req.params.id, function(error, hostel_found){
-        if (error)
-        {
-            res.redirect("/");
+        if (!updatedHostel) {
+            return res.status(404).json({ error: "Hostel not found" });
         }
-        else
-        {
-            res.render("hostels/edit", {hostel:hostel_found});
-        }
-    })
-})
 
-// update hostel route
-router.put("/:id", middleware.check_hostel_ownership, function(req,res){
-    hostel.findByIdAndUpdate(req.params.id, {
-        name: req.body.name,
-        image: req.body.image_url,
-        description: req.body.description,
-        price: req.body.price
-        }, function(error, hostel_update){
-        if (error)
-        {
-            console.log(error);
-            res.redirect(req.params.id+"/edit");
-        }
-        else
-        {
-            res.redirect(req.params.id);
-        }
-    })
+        return res.status(200).json({ message: "Hostel updated successfully", hostel: updatedHostel });
+    } catch (error) {
+        console.error("Error updating hostel:", error);
+        return res.status(500).json({ error: "Error updating hostel" });
+    }
 });
 
-// destroy hostel route
-router.delete("/:id", middleware.check_hostel_ownership, function(req,res){
-    hostel.findByIdAndRemove(req.params.id, function(error, hostel_delete){
-        if (error)
-        {
-            console.log(error);
-            res.status(404).json({ error: "Error in removing hostel" })
+// Delete hostel route
+router.delete("/:id", middleware.protectRoute, middleware.checkHostelOwnership, async (req, res) => {
+    try {
+        const hostel_delete = await Hostel.findByIdAndRemove(req.params.id).exec();
+
+        if (!hostel_delete) {
+            return res.status(404).json({ error: "Hostel not found" });
         }
-        else
-        {
-            comment.deleteMany({
-                _id:{$in: hostel_delete.comments}
-                }, function(error){
-                if (error)
-                {
-                    console.log(error);
-                    res.status(404).json({ error: "Error in removing hostel" })
-                }
-                else
-                {
-                    console.log("comments deleted!");
-                }
-            });
-        }
-        return res.status(200).json("hostel deleted");
-    });
+
+        await Comment.deleteMany({ _id: { $in: hostel_delete.comments } }).exec();
+        console.log("Comments deleted!");
+        return res.status(200).json("Hostel deleted");
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: "Error in removing hostel" });
+    }
 });
 
-
-module.exports=router;
+module.exports = router;
