@@ -1,5 +1,6 @@
 const hostel=require("../models/hostel");
 const comment=require("../models/comment");
+const jwt = require('jsonwebtoken');
 
 const middleware_obj={};
 
@@ -71,26 +72,23 @@ middleware_obj.check_comment_ownership = function check_comment_ownership(req,re
     }
 }
 
-middleware_obj.isloggedin = function isloggedin (req,res,next){
-    const token = req.header('Authorization').replace('Bearer ', '');
-
+middleware_obj.isloggedin = function isloggedin(req, res, next) {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    console.log("token", token);
     if (!token) {
+        console.log("No token provided");
         return res.status(401).json({ error: "Access denied. No token provided." });
     }
-
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        console.log("Decoded user", decoded);
+        req.user = decoded; // Attach decoded user data to req.user
         next();
     } catch (ex) {
-        res.status(400).json({ error: "Invalid token." });
+        console.log("Token verification failed", ex);
+        return res.status(401).json({ error: "Invalid token." });
     }
-    if (req.isAuthenticated())
-    {
-        return next();
-    }
-    req.flash("error", "Please login to proceed");
-    res.redirect("/login");
-}
+};
+
 
 module.exports= middleware_obj;

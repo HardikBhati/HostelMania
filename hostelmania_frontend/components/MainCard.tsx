@@ -3,28 +3,30 @@ import Image from "next/image";
 import { response } from "../type/res";
 import classes from "./main.module.scss";
 import Button from "@mui/material/Button";
-import Readrate from "./Readrate";
-import MainBackDrop from "../modals/alerts/MainBackDrop";
-import Ratings from "./Ratings";
+import { deleteHostel } from "../pages/api/hostels";
+import { useRouter } from "next/router";
+import Cookie from "js-cookie";
+
 const MainCard: React.FC<response> = (props) => {
   const [show, setShow] = useState<boolean>(false);
-  const change = () => {
-    setShow((el) => !el);
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    try {
+      const token = Cookie.get("jwt");; // Retrieve the token from cookies
+      if (!token) {
+        console.log("Token not found");
+      }
+      console.log("delete id", props._id, "token", token)
+      const res = await deleteHostel(props._id, token);
+      router.push("/hostels"); // Adjust the path as necessary
+    } catch (error) {
+      console.error("Failed to delete the hostel.", error);
+    }
   };
-  // const msg =
-  //   props.comments.length > 0
-  //     ? "Leave A review"
-  //     : "No Reviews Yet, Leave a Review";
 
   return (
     <div className={classes.body}>
-      {/* <>
-        {show && (
-          <MainBackDrop>
-            <Ratings change={change} show={change} />
-          </MainBackDrop>
-        )}
-      </> */}
       <div className={classes.box} key={props._id}>
         <div className={classes.box_sub}>
           <h2>Posted by {props.author.username}</h2>
@@ -44,16 +46,13 @@ const MainCard: React.FC<response> = (props) => {
           <p>{props.description}</p>
         </div>
         <div className={`${classes.info} ${classes.price}`}>${props.price}</div>
-        <div className={`${classes.info}`}>
-          <div className={`${classes.btn}`}>
-            {/* <Button variant="contained">Edit</Button> */}
-            <Button variant="contained">Delete</Button>
-            {/* <Button variant="contained">Buy Camp</Button> */}
+        <div className={classes.info}>
+          <div className={classes.btn}>
+            <Button variant="contained" onClick={handleDelete}>
+              Delete
+            </Button>
           </div>
         </div>
-        {/* <div className={classes.ratings} onClick={change}>
-          <Readrate {...props} />
-        </div> */}
       </div>
     </div>
   );

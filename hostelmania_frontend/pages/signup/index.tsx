@@ -2,7 +2,6 @@ import React, { useRef } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import styles from "../../styles/sign.module.scss";
-import { FcGoogle } from "react-icons/fc";
 import { notifyMessage } from "../../helper/toast";
 import axios from "axios";
 
@@ -89,13 +88,6 @@ const signUp: React.FC = () => {
             </Button>
           </div>
         </form>
-        {/* <span>or</span>
-        <div className={styles.txts}>
-          <Button type="submit" variant="contained" className={styles.oAuth}>
-            Google
-            <FcGoogle />
-          </Button>
-        </div> */}
       </div>
     </>
   );

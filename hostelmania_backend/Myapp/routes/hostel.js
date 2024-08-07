@@ -7,20 +7,6 @@ const middleware=require("../middleware");
 const authenticateJWT = require("../middleware/authenticate_jwt")
 
 
-
-// router.get("/", authenticateJWT, (req, res) => {
-//     hostel.find({}, (error, hostels) => {
-//         if (error) {
-//             console.log("We have encountered an error:");
-//             console.log(error);
-//             return res.status(500).json({ error: "Internal Server Error" });
-//         } else {
-//             console.log("Search request was successful");
-//             return res.status(200).json({ hostels });
-//         }
-//     });
-// });
-
 router.get("/", authenticateJWT, (req, res) => {
     const authorUsername = req.query.username;
     const query = authorUsername ? { "author.username": authorUsername } : {};
@@ -37,35 +23,6 @@ router.get("/", authenticateJWT, (req, res) => {
     });
 });
 
-
-// create route
-// router.post("/", authenticateJWT, function (req, res) {
-
-//     // const user_obj = user.findById(req.user.id)
-//     const user_obj = User.findById(req.user.id).exec();
-//     console.log("user_obj", user_obj)
-//     const temp = new hostel({
-//         name: req.body.name,
-//         image: req.body.image_url,
-//         description: req.body.description,
-//         author: {
-//             id: user_obj.id,
-//             username: user_obj.username
-//         },
-//         price: req.body.price
-//     });
-
-//     hostel.create(temp, function (error, hostels) {
-//         if (error) {
-//             console.log("we have encountered error");
-//             console.log(error);
-//             return res.status(500).json({ error: "Internal Server Error" });
-//         } else {
-//             console.log("hostel saved successfully");
-//             return res.status(201).json({ message: "Hostel saved successfully", hostel: hostels });
-//         }
-//     });
-// });
 router.post("/", middleware.isloggedin, async (req, res) => {
     try {
         // Fetch user details
@@ -90,12 +47,16 @@ router.post("/", middleware.isloggedin, async (req, res) => {
         // Save the hostel to the database
         const savedHostel = await temp.save();
 
+        // Send success response
         return res.status(201).json({ message: "Hostel saved successfully", hostel: savedHostel });
     } catch (error) {
         console.error("Encountered an error:", error);
-        return res.status(500).json({ error: "Internal Server Error" });
+        if (!res.headersSent) { // Check if headers have already been sent
+            return res.status(500).json({ error: "Internal Server Error" });
+        }
     }
 });
+
 // new route
 router.get("/new", function(req,res){
     res.render("hostels/new");
@@ -111,7 +72,6 @@ router.get("/:id", authenticateJWT, function(req, res) {
         
         console.log("Hostel data found successfully:", hostel_found);
         return res.status(200).json({ hostel_found });
-        // res.render("hostels/details", { hostel: hostel_found });
     });
 });
 
@@ -156,7 +116,7 @@ router.delete("/:id", middleware.check_hostel_ownership, function(req,res){
         if (error)
         {
             console.log(error);
-            res.redirect("/hostels/"+req.params.id);
+            res.status(404).json({ error: "Error in removing hostel" })
         }
         else
         {
@@ -166,15 +126,15 @@ router.delete("/:id", middleware.check_hostel_ownership, function(req,res){
                 if (error)
                 {
                     console.log(error);
-                    res.redirect("/hostels");
+                    res.status(404).json({ error: "Error in removing hostel" })
                 }
                 else
                 {
-                    req.flash("success", "hostel Deleted!");
-                    res.redirect("/hostels");
+                    console.log("comments deleted!");
                 }
             });
         }
+        return res.status(200).json("hostel deleted");
     });
 });
 

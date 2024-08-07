@@ -9,6 +9,7 @@ import { notifyMessage } from "../../helper/toast";
 import { useRouter } from "next/router";
 import AuthContext from "../../context/authContext";
 import Cookie from "js-cookie";
+import { createHostel } from "../api/hostels";
 
 interface ress {
   title: string;
@@ -81,10 +82,10 @@ const Index = () => {
                 }
               }
             );
-
+            // const res = await createHostel(dt, token)
             if (res.status>201) {
               seteErr(true);
-              throw new Error("Could not add the camp. Something went wrong.");
+              throw new Error("Could not add the hostel. Something went wrong.");
             }
 
             notifyMessage("New camp was added successfully");
@@ -106,7 +107,7 @@ const Index = () => {
           <title>New Camp</title>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </Head>
-        <h1>New Hostels</h1>
+        <h1>Post Hostel</h1>
         <form onSubmit={onSubmit} className={classes.cont}>
           <div className={`${classes.input} flex col put`}>
             <div className="col">
