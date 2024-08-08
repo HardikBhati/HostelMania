@@ -7,8 +7,10 @@ const middleware = require("../middleware");
 
 // Protect route with middleware.protectRoute
 router.get("/", middleware.protectRoute, async (req, res) => {
-    const authorUsername = req.query.username;
-    const query = authorUsername ? { "author.username": authorUsername } : {};
+    // const authorUsername = req.query.username;
+    // const query = authorUsername ? { "author.username": authorUsername } : {};
+    const userId = req.query.user_id;
+    const query = userId ? {"author.id": userId}: {};
 
     try {
         const hostels = await Hostel.find(query).exec();
