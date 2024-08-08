@@ -35,8 +35,7 @@ HostelBlogs is a full-stack web application built with Next.js and node.js where
 - User authentication (login, logout, register) with security measures.
 - Listing and details of each blog.
 - JWT based authentication.
-- get blogs with the author/owner name.
-- Delete blog if authorized.
+- Dashboard for viewing/deleting your blogs
 - Protected routes with proper implementation of middleware
 - 
 
@@ -132,5 +131,5 @@ HostelBlogs is a full-stack web application built with Next.js and node.js where
 - `GET /hostels`: Get all hostel blogs
 - `POST /hostels`: Create a new blog (authenticated)
 - `GET /hostels/:id`: Get a blog by ID
-- `GET /hostels/:username`: Get hostel blogs by username/owner name
+- `GET /hostels/?userId:<user_id>`: get your blogs (for dashboard)
 - `DELETE /hostels/:id`: Delete hostel if authorized
