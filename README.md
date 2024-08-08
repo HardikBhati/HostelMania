@@ -5,16 +5,19 @@ HostelBlogs is a full-stack web application built with Next.js and node.js where
 <br>
 <br>
 
+![Camp image](hostelmania_frontend/images/image1.png)
+
+
+![Camp image](hostelmania_frontend/images/image2.png)
+
+
 ![Camp image](hostelmania_frontend/images/image3.png)
 
 
 ![Camp image](hostelmania_frontend/images/image4.png)
 
 
-![Camp image](hostelmania_frontend/images/image1.png)
-
-
-![Camp image](hostelmania_frontend/images/image2.png)
+![Camp image](hostelmania_frontend/images/image5.png)
 
 
 ## Table of Contents
