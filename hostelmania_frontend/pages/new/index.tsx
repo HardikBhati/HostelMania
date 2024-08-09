@@ -1,167 +1,163 @@
-import React, { useRef, useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import classes from "../../styles/new.module.scss";
 import Link from "next/link";
 import Head from "next/head";
-import axios from "axios";
-import Alert from "../../modals/alerts/Alert";
-import { notifyMessage } from "../../helper/toast";
 import { useRouter } from "next/router";
 import AuthContext from "../../context/authContext";
 import Cookie from "js-cookie";
-import { createHostel } from "../api/hostels";
+import { notifyMessage } from "../../helper/toast";
+import axios from "axios";
 
-interface ress {
-  title: string;
-  description: string;
-  location: string;
-  image: string;
-  price: number;
-  reviews: string[];
-  __id: string;
-}
-
-interface result {
-  ok: boolean;
-  res: ress;
-}
-
-const Index = () => {
+const Index: React.FC = () => {
   const { auth, removeAuth } = useContext(AuthContext);
-  const [err, seteErr] = useState<boolean>(false);
-  const title = useRef<HTMLInputElement>(null);
-  const location = useRef<HTMLInputElement>(null);
-  const imgUrl = useRef<HTMLInputElement>(null);
-  const price = useRef<HTMLInputElement>(null);
-  const dsc = useRef<HTMLInputElement>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    imageUrl: "",
+    price: "",
+    description: "",
+  });
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (!auth) {
       removeAuth();
     }
-  }, [auth]);
+  }, [auth, removeAuth]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const validateImageUrl = (url: string) => {
+    const domain = "images.unsplash.com"; // Replace with your required domain
+    const urlPattern = new RegExp(`^(https?://)?(www\\.)?${domain}/.*`, "i");
+    return urlPattern.test(url);
+  };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (
-      title.current &&
-      imgUrl.current &&
-      price.current &&
-      dsc.current
-    ) {
-      const tit = title.current.value;
-      const img = imgUrl.current.value;
-      const dscs = dsc.current.value;
-      const pr = price.current.value;
 
-      if (
-        tit.length <= 0 ||
-        img.length <= 0 ||
-        dscs.length <= 0 ||
-        pr.length <= 0
-      ) {
-        alert("Please enter all input");
-      } else {
-        const dt = {
-          name: tit,
-          description: dscs,
-          image_url: img,
-          price: pr,
-        };
+    const { name, imageUrl, price, description } = formData;
 
-        const sendData = async () => {
-          try {
-            const token = Cookie.get("jwt"); // Get the JWT token from cookies
-            const res = await axios.post(
-              `${process.env.NEXT_PUBLIC_API}/hostels/`,
-              dt,
-              {
-                headers: {
-                  Authorization: `Bearer ${token}` // Add the token to the headers
-                }
-              }
-            );
-            // const res = await createHostel(dt, token)
-            if (res.status>201) {
-              seteErr(true);
-              throw new Error("Could not add the hostel. Something went wrong.");
-            }
+    if (!name || !imageUrl || !price || !description) {
+      notifyMessage("Please fill in all fields");
+      return;
+    }
 
-            notifyMessage("New camp was added successfully");
-            router.push("/hostels"); // Redirect after successful addition
-          } catch (e) {
-            notifyMessage(e.message || "An error occurred");
-          }
-        };
+    if (!validateImageUrl(imageUrl)) {
+      notifyMessage(`Image URL must be from the domain ${"example.com"}`);
+      return;
+    }
 
-        sendData();
+    const data = {
+      name,
+      description,
+      image_url: imageUrl,
+      price: Number(price),
+    };
+
+    try {
+      const token = Cookie.get("jwt");
+      if (!token) {
+        setError("Authentication token not found. Please log in.");
+        return;
       }
+
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API}/hostels/`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.status > 201) {
+        throw new Error("Failed to add the hostel. Please try again.");
+      }
+
+      notifyMessage("New hostel added successfully!");
+      router.push("/hostels");
+    } catch (error) {
+      setError(error.message || "An error occurred. Please try again.");
+      notifyMessage(error.message || "An error occurred.");
     }
   };
 
   return (
     <>
+      <Head>
+        <title>New Blog</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       <div className={classes.main}>
-        <Head>
-          <title>New Camp</title>
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        </Head>
-        <h1>Post Hostel</h1>
+        <h1>Post Blog</h1>
+        {error && <p className={classes.error}>{error}</p>}
         <form onSubmit={onSubmit} className={classes.cont}>
           <div className={`${classes.input} flex col put`}>
             <div className="col">
-              <label htmlFor="outlined-search">Name</label>
+              <label htmlFor="name">Name</label>
               <TextField
-                id="outlined-search"
-                label=""
-                type="search"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
                 variant="outlined"
                 className={classes.text}
                 required
-                inputRef={title}
               />
             </div>
             <div className="col">
-              <label htmlFor="outlined-search">Image URL</label>
+              <label htmlFor="imageUrl">Image URL</label>
               <TextField
-                id="outlined-search"
-                label=""
-                type="search"
+                id="imageUrl"
+                name="imageUrl"
+                value={formData.imageUrl}
+                onChange={handleChange}
                 variant="outlined"
-                required
                 className={classes.text}
-                inputRef={imgUrl}
+                required
               />
             </div>
             <div className="col">
-              <label htmlFor="outlined-search">Price</label>
+              <label htmlFor="price">Price</label>
               <TextField
-                id="outlined-search"
-                label=""
+                id="price"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
                 type="number"
                 variant="outlined"
                 className={classes.text}
                 required
-                inputRef={price}
               />
             </div>
             <div className="col">
+              <label htmlFor="description">Description</label>
               <TextField
-                id="outlined-multiline-static"
-                label="Description"
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
                 multiline
                 rows={4}
                 variant="outlined"
                 className={classes.text}
-                inputRef={dsc}
+                required
               />
             </div>
             <div className={`${classes.tns} flex`}>
-              <button className="btn" type="submit">Submit</button>
-              <button className="btn">
-                <Link href="/hostels">Hostels</Link>
+              <button className="btn" type="submit">
+                Submit
               </button>
+              <Link href="/hostels">
+                <button className="btn" type="button">
+                  Hostels
+                </button>
+              </Link>
             </div>
           </div>
         </form>
